@@ -297,20 +297,20 @@ export const TokenizerInput = () => {
             {/* Model selector */}
             <div className="flex justify-end mb-2 relative">
                 <div
-                    className="flex items-center gap-2 cursor-pointer rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm hover:bg-neutral-700"
+                    className="flex items-center gap-2 cursor-pointer rounded-md border border-border bg-white px-3 py-2 text-sm hover:bg-surface-warm"
                     onClick={toggleModelDropdown}
                 >
                     <span>{selectedModelName}</span>
                     <ChevronDown size={16} className={`transition-transform ${showModelDropdown ? 'rotate-180' : ''}`} />
                 </div>
-                
+
                 {showModelDropdown && (
-                    <div className="absolute right-0 top-full mt-1 w-64 rounded-md border border-neutral-700 bg-neutral-800 shadow-lg z-10">
+                    <div className="absolute right-0 top-full mt-1 w-64 rounded-md border border-border bg-white shadow-lg z-10">
                         <div className="py-1">
                             {CLAUDE_MODELS.map((model) => (
                                 <div
                                     key={model.id}
-                                    className={`px-4 py-2 text-sm cursor-pointer hover:bg-neutral-700 ${model.id === selectedModel ? 'bg-neutral-700' : ''}`}
+                                    className={`px-4 py-2 text-sm cursor-pointer hover:bg-surface-warm ${model.id === selectedModel ? 'bg-surface-warm' : ''}`}
                                     onClick={() => selectModel(model.id)}
                                 >
                                     {model.name}
@@ -332,20 +332,20 @@ export const TokenizerInput = () => {
                             onChange={handleFileChange}
                             accept={getAcceptedFileTypes()}
                         />
-                        <button className="flex items-center gap-2 rounded-md bg-neutral-800 px-3 py-2 text-sm hover:bg-neutral-700 border border-neutral-700">
+                        <button className="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm hover:bg-surface-warm border border-border">
                             <Upload size={16} />
                             Upload File
                         </button>
                     </div>
                     {file && (
-                        <div className="flex items-center rounded-md bg-neutral-800 border border-neutral-700 px-3 py-1.5 text-sm">
+                        <div className="flex items-center rounded-md bg-white border border-border px-3 py-1.5 text-sm">
                             {fileType === 'image' && <ImageIcon size={14} className="mr-2" />}
                             {fileType === 'pdf' && <FileText size={14} className="mr-2" />}
                             {fileType === 'text' && <FileText size={14} className="mr-2" />}
                             <span className="truncate max-w-[150px]">{file.name}</span>
-                            <button 
+                            <button
                                 onClick={clearFile}
-                                className="ml-2 text-neutral-400 hover:text-white"
+                                className="ml-2 text-text-soft hover:text-ink"
                             >
                                 <X size={14} />
                             </button>
@@ -356,16 +356,16 @@ export const TokenizerInput = () => {
                     <button
                         onClick={handleAnalyzeFile}
                         disabled={isProcessing}
-                        className="whitespace-nowrap rounded-md bg-neutral-800 px-4 py-2 text-sm hover:bg-neutral-700 border border-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="whitespace-nowrap rounded-md bg-pink text-cream px-4 py-2 text-sm hover:bg-pink-dark border border-pink disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isProcessing ? 'Processing...' : 'Count Tokens'}
                     </button>
                 )}
             </div>
-            
+
             {/* Image preview */}
             {filePreview && fileType === 'image' && (
-                <div className="rounded-xl border border-neutral-700 bg-neutral-800 p-4 flex justify-center">
+                <div className="rounded-xl border border-border bg-white p-4 flex justify-center">
                     <img
                         src={filePreview}
                         alt="Preview"
@@ -373,10 +373,10 @@ export const TokenizerInput = () => {
                     />
                 </div>
             )}
-            
+
             {/* Text input area */}
             {!file && (
-                <div className="rounded-xl border border-neutral-700 bg-neutral-800 overflow-hidden">
+                <div className="rounded-xl border border-border bg-white overflow-hidden">
                     <Textarea
                         placeholder="Enter some text to count tokens..."
                         rows={10}
@@ -387,12 +387,12 @@ export const TokenizerInput = () => {
                     />
                 </div>
             )}
-            
-            {error && <p className="text-orange-400 mb-2">{error}</p>}
+
+            {error && <p className="text-destructive mb-2">{error}</p>}
 
             {/* Opus 4.7 new-tokenizer notice */}
             {selectedModel === OPUS_47_ID && (
-                <div className="rounded-md border border-amber-600/40 bg-amber-950/30 px-4 py-3 text-sm text-amber-200">
+                <div className="rounded-md border border-pink/25 bg-pink-light px-4 py-3 text-sm text-pink-dark">
                     <span className="font-medium">Heads up:</span> Claude Opus 4.7 uses a
                     new tokenizer that typically produces <em>more</em> tokens for the same
                     input than Opus 4.6 and earlier models. For reference we also run the
@@ -468,11 +468,11 @@ export const TokenMetrics = ({ tokens, gpt4oTokens, geminiTokens, comparisonToke
         : '';
 
     return (
-        <div className="flex flex-wrap gap-6 p-4 rounded-xl bg-neutral-800 border border-neutral-700">
+        <div className="flex flex-wrap gap-6 p-4 rounded-xl bg-white border border-border">
             {/* Claude Tokens */}
             <div className="space-y-1">
-                <h2 className="text-xs font-medium text-neutral-400">Claude Tokens</h2>
-                <p className="text-3xl font-light">
+                <h2 className="text-xs font-medium text-text-soft">Claude Tokens</h2>
+                <p className="font-mono text-3xl font-light text-pink">
                     {isProcessing ? (
                         <span className="animate-pulse">...</span>
                     ) : (
@@ -480,9 +480,9 @@ export const TokenMetrics = ({ tokens, gpt4oTokens, geminiTokens, comparisonToke
                     )}
                 </p>
                 {!isProcessing && tokens > 0 && modelInputPricePerMTok !== null && (
-                    <p className="text-xs text-neutral-500">
+                    <p className="text-xs text-text-soft">
                         Est. input cost: {formatCost(tokens, modelInputPricePerMTok)}
-                        <span className="text-neutral-600"> @ ${modelInputPricePerMTok}/MTok</span>
+                        <span className="text-text-soft/70"> @ ${modelInputPricePerMTok}/MTok</span>
                     </p>
                 )}
             </div>
@@ -490,11 +490,11 @@ export const TokenMetrics = ({ tokens, gpt4oTokens, geminiTokens, comparisonToke
             {/* Comparison Claude tokenizer (e.g. Opus 4.6 vs selected Opus 4.7) */}
             {comparisonModelName && (
                 <div className="space-y-1">
-                    <h2 className="text-xs font-medium text-neutral-400">
+                    <h2 className="text-xs font-medium text-text-soft">
                         {comparisonModelName} Tokens
                     </h2>
                     <div className="flex items-baseline gap-2">
-                        <p className="text-3xl font-light">
+                        <p className="font-mono text-3xl font-light text-ink">
                             {isProcessing ? (
                                 <span className="animate-pulse">...</span>
                             ) : comparisonTokens !== null ? (
@@ -504,15 +504,15 @@ export const TokenMetrics = ({ tokens, gpt4oTokens, geminiTokens, comparisonToke
                             )}
                         </p>
                         {!isProcessing && comparisonTokens !== null && tokens > 0 && (
-                            <span className={`text-sm ${comparisonDiff.includes('−') ? 'text-green-400' : 'text-orange-400'}`}>
+                            <span className={`text-sm ${comparisonDiff.includes('−') ? 'text-teal-dark' : 'text-pink-dark'}`}>
                                 {comparisonDiff}
                             </span>
                         )}
                     </div>
                     {!isProcessing && comparisonTokens !== null && comparisonTokens > 0 && comparisonInputPricePerMTok !== null && (
-                        <p className="text-xs text-neutral-500">
+                        <p className="text-xs text-text-soft">
                             Est. input cost: {formatCost(comparisonTokens, comparisonInputPricePerMTok)}
-                            <span className="text-neutral-600"> @ ${comparisonInputPricePerMTok}/MTok</span>
+                            <span className="text-text-soft/70"> @ ${comparisonInputPricePerMTok}/MTok</span>
                         </p>
                     )}
                 </div>
@@ -521,9 +521,9 @@ export const TokenMetrics = ({ tokens, gpt4oTokens, geminiTokens, comparisonToke
             {/* GPT-4o Tokens - only show for text inputs */}
             {(fileType === 'text' || !fileName) && (
                 <div className="space-y-1">
-                    <h2 className="text-xs font-medium text-neutral-400">GPT-4o Tokens</h2>
+                    <h2 className="text-xs font-medium text-text-soft">GPT-4o Tokens</h2>
                     <div className="flex items-baseline gap-2">
-                        <p className="text-3xl font-light">
+                        <p className="font-mono text-3xl font-light text-ink">
                             {isProcessing ? (
                                 <span className="animate-pulse">...</span>
                             ) : gpt4oTokens !== null ? (
@@ -533,15 +533,15 @@ export const TokenMetrics = ({ tokens, gpt4oTokens, geminiTokens, comparisonToke
                             )}
                         </p>
                         {!isProcessing && gpt4oTokens !== null && tokens > 0 && (
-                            <span className={`text-sm ${gpt4oDiff.includes('−') ? 'text-green-400' : 'text-orange-400'}`}>
+                            <span className={`text-sm ${gpt4oDiff.includes('−') ? 'text-teal-dark' : 'text-pink-dark'}`}>
                                 {gpt4oDiff}
                             </span>
                         )}
                     </div>
                     {!isProcessing && gpt4oTokens !== null && gpt4oTokens > 0 && (
-                        <p className="text-xs text-neutral-500">
+                        <p className="text-xs text-text-soft">
                             Est. input cost: {formatCost(gpt4oTokens, GPT4O_INPUT_PRICE_PER_MTOK)}
-                            <span className="text-neutral-600"> @ ${GPT4O_INPUT_PRICE_PER_MTOK}/MTok</span>
+                            <span className="text-text-soft/70"> @ ${GPT4O_INPUT_PRICE_PER_MTOK}/MTok</span>
                         </p>
                     )}
                 </div>
@@ -550,9 +550,9 @@ export const TokenMetrics = ({ tokens, gpt4oTokens, geminiTokens, comparisonToke
             {/* Gemini Tokens - only show for text inputs */}
             {(fileType === 'text' || !fileName) && (
                 <div className="space-y-1">
-                    <h2 className="text-xs font-medium text-neutral-400">Gemini Tokens</h2>
+                    <h2 className="text-xs font-medium text-text-soft">Gemini Tokens</h2>
                     <div className="flex items-baseline gap-2">
-                        <p className="text-3xl font-light">
+                        <p className="font-mono text-3xl font-light text-ink">
                             {isProcessing ? (
                                 <span className="animate-pulse">...</span>
                             ) : geminiTokens !== null ? (
@@ -562,24 +562,24 @@ export const TokenMetrics = ({ tokens, gpt4oTokens, geminiTokens, comparisonToke
                             )}
                         </p>
                         {!isProcessing && geminiTokens !== null && tokens > 0 && (
-                            <span className={`text-sm ${geminiDiff.includes('−') ? 'text-green-400' : 'text-orange-400'}`}>
+                            <span className={`text-sm ${geminiDiff.includes('−') ? 'text-teal-dark' : 'text-pink-dark'}`}>
                                 {geminiDiff}
                             </span>
                         )}
                     </div>
                     {!isProcessing && geminiTokens !== null && geminiTokens > 0 && (
-                        <p className="text-xs text-neutral-500">
+                        <p className="text-xs text-text-soft">
                             Est. input cost: {formatCost(geminiTokens, GEMINI_INPUT_PRICE_PER_MTOK)}
-                            <span className="text-neutral-600"> @ ${GEMINI_INPUT_PRICE_PER_MTOK}/MTok</span>
+                            <span className="text-text-soft/70"> @ ${GEMINI_INPUT_PRICE_PER_MTOK}/MTok</span>
                         </p>
                     )}
                 </div>
             )}
-            
+
             {/* Character Count */}
             <div className="space-y-1">
-                <h2 className="text-xs font-medium text-neutral-400">Characters</h2>
-                <p className="text-3xl font-light">
+                <h2 className="text-xs font-medium text-text-soft">Characters</h2>
+                <p className="font-mono text-3xl font-light text-ink">
                     {isProcessing ? (
                         <span className="animate-pulse">...</span>
                     ) : (
@@ -587,17 +587,17 @@ export const TokenMetrics = ({ tokens, gpt4oTokens, geminiTokens, comparisonToke
                     )}
                 </p>
             </div>
-            
+
             {/* Model */}
             <div className="space-y-1">
-                <h2 className="text-xs font-medium text-neutral-400">Model</h2>
+                <h2 className="text-xs font-medium text-text-soft">Model</h2>
                 <p className="text-sm">{model}</p>
             </div>
-            
+
             {/* File info if applicable */}
             {fileName && (
                 <div className="space-y-1 flex-1">
-                    <h2 className="text-xs font-medium text-neutral-400">
+                    <h2 className="text-xs font-medium text-text-soft">
                         {fileType === 'image' ? 'Image' : fileType === 'pdf' ? 'PDF' : 'File'}
                     </h2>
                     <p className="text-sm truncate">{fileName}</p>

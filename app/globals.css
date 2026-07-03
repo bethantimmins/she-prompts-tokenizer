@@ -4,12 +4,12 @@
 
 @layer base {
   body {
-    font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+    font-family: var(--font-inter), Arial, Helvetica, sans-serif;
   }
 }
 
 a {
-  @apply text-orange-400 hover:text-orange-600
+  @apply text-pink hover:text-pink-dark
 }
 
 @layer utilities {
@@ -20,51 +20,28 @@ a {
 
 @layer base {
 
-
+  /* She Prompts external brand tokens — cream, pink, ink */
   :root {
-    --background: 25 0% 95%;
-    --foreground: 25 0% 10%;
-    --card: 25 0% 90%;
-    --card-foreground: 25 0% 15%;
-    --popover: 25 0% 95%;
-    --popover-foreground: 25 95% 10%;
-    --primary: 25 49.7% 66.5%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 25 10% 70%;
-    --secondary-foreground: 0 0% 0%;
-    --muted: -13 10% 85%;
-    --muted-foreground: 25 0% 40%;
-    --accent: -13 10% 80%;
-    --accent-foreground: 25 0% 15%;
-    --destructive: 0 50% 50%;
-    --destructive-foreground: 25 0% 90%;
-    --border: 25 20% 50%;
-    --input: 25 20% 50%;
-    --ring: 25 49.7% 66.5%;
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 25 10% 10%;
-    --foreground: 25 0% 90%;
-    --card: 25 0% 10%;
-    --card-foreground: 25 0% 90%;
-    --popover: 25 10% 5%;
-    --popover-foreground: 25 0% 90%;
-    --primary: 25 49.7% 66.5%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 25 10% 20%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: -13 10% 25%;
-    --muted-foreground: 25 0% 60%;
-    --accent: -13 10% 25%;
-    --accent-foreground: 25 0% 90%;
-    --destructive: 0 50% 50%;
-    --destructive-foreground: 25 0% 90%;
-    --border: 25 20% 50%;
-    --input: 25 20% 50%;
-    --ring: 25 49.7% 66.5%;
-    --radius: 0.5rem;
+    --background: 40 38% 97%;
+    --foreground: 24 24% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 24 24% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 24% 8%;
+    --primary: 336 78% 43%;
+    --primary-foreground: 40 38% 97%;
+    --secondary: 37 33% 94%;
+    --secondary-foreground: 24 24% 8%;
+    --muted: 42 5% 92%;
+    --muted-foreground: 20 15% 31%;
+    --accent: 339 47% 95%;
+    --accent-foreground: 340 52% 29%;
+    --destructive: 0 65% 48%;
+    --destructive-foreground: 40 38% 97%;
+    --border: 30 12% 85%;
+    --input: 30 12% 85%;
+    --ring: 336 78% 43%;
+    --radius: 0.625rem;
   }
 }
 

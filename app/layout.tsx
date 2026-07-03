@@ -1,24 +1,33 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import localFont from "next/font/local";
+import { Playfair_Display, Inter, DM_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react"
 
 import "./globals.css";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  weight: ["400", "500"],
+  variable: "--font-playfair",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  variable: "--font-inter",
+});
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  variable: "--font-dm-mono",
 });
 
 export const metadata: Metadata = {
-  title: "Claude Tokenizer",
-  description: "A Tokenizer for Claude models including Claude Sonnet 4.5, Opus 4.1, Haiku 4.5, and more. Count tokens for text, PDFs, and images.",
+  title: "Claude Token Counter · She Prompts",
+  description: "A free Claude token counter from She Prompts. Count tokens for Claude Sonnet 4.5, Opus 4.1, Haiku 4.5, and more — for text, PDFs, and images.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -39,7 +48,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}
+        className={`${playfairDisplay.variable} ${inter.variable} ${dmMono.variable} antialiased`}
       >
         {children}
         <Analytics />
