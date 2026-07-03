@@ -49,7 +49,31 @@ const config: Config = {
 					'3': 'hsl(var(--chart-3))',
 					'4': 'hsl(var(--chart-4))',
 					'5': 'hsl(var(--chart-5))'
+				},
+				// She Prompts external brand
+				cream: '#FAF8F4',
+				ink: '#1A1410',
+				'surface-warm': '#F5F0E8',
+				'surface-alt': '#F0EDE6',
+				'text-mid': '#5A4A42',
+				'text-soft': '#9A8A82',
+				pink: {
+					DEFAULT: '#C2185B',
+					light: '#FBEAF0',
+					mid: '#E91E8C',
+					dark: '#72243E',
+					deep: '#4B1528'
+				},
+				teal: {
+					DEFAULT: '#1D9E75',
+					light: '#E1F5EE',
+					dark: '#0F6E56'
 				}
+			},
+			fontFamily: {
+				serif: ['var(--font-playfair)', 'Georgia', 'serif'],
+				sans: ['var(--font-inter)', 'Arial', 'Helvetica', 'sans-serif'],
+				mono: ['var(--font-dm-mono)', 'monospace']
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
