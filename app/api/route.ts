@@ -15,6 +15,35 @@ if (!process.env.GEMINI_API_KEY) {
 // Default model to use if none is provided
 const DEFAULT_MODEL = 'claude-opus-4-7';
 
+// Per-IP rate limiting. In-memory, so it resets on cold start and isn't
+// shared across serverless instances — good enough to blunt bursts/bots
+// on a low-traffic tool, but swap for a distributed limiter (e.g. Upstash
+// Redis) if this ever sees real scale.
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_REQUESTS = 30;
+const requestLog = new Map<string, { count: number; windowStart: number }>();
+
+function getClientIp(req: NextRequest): string {
+    return (
+        req.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+        req.headers.get('x-real-ip') ||
+        'unknown'
+    );
+}
+
+function isRateLimited(ip: string): boolean {
+    const now = Date.now();
+    const entry = requestLog.get(ip);
+
+    if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+        requestLog.set(ip, { count: 1, windowStart: now });
+        return false;
+    }
+
+    entry.count += 1;
+    return entry.count > RATE_LIMIT_MAX_REQUESTS;
+}
+
 // Function to get GPT-4o token count
 function getGPT4oTokenCount(text: string) {
     try {
@@ -46,6 +75,14 @@ async function getGeminiTokenCount(text: string) {
 }
 
 export async function POST(req: NextRequest) {
+    const ip = getClientIp(req);
+    if (isRateLimited(ip)) {
+        return Response.json(
+            { error: 'Too many requests. Please wait a moment and try again.' },
+            { status: 429 }
+        );
+    }
+
     try {
         const anthropic = new Anthropic({
             apiKey: process.env.ANTHROPIC_API_KEY,
