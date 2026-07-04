@@ -132,7 +132,8 @@ export const TokenizerInput = () => {
             });
 
             if (!response.ok) {
-                throw new Error(`API request failed with status ${response.status}`);
+                const errorData = await response.json().catch(() => null);
+                throw new Error(errorData?.error || `API request failed with status ${response.status}`);
             }
 
             const data = await response.json();
@@ -150,7 +151,7 @@ export const TokenizerInput = () => {
             setError(null);
         } catch (err) {
             console.error("Token counting error:", err);
-            setError("Failed to analyze text. Please try again.");
+            setError(err instanceof Error ? err.message : "Failed to analyze text. Please try again.");
             setStats({
                 tokens: null,
                 gpt4oTokens: null,
@@ -184,7 +185,8 @@ export const TokenizerInput = () => {
             });
 
             if (!response.ok) {
-                throw new Error(`API request failed with status ${response.status}`);
+                const errorData = await response.json().catch(() => null);
+                throw new Error(errorData?.error || `API request failed with status ${response.status}`);
             }
 
             const data = await response.json();
@@ -203,7 +205,7 @@ export const TokenizerInput = () => {
             setError(null);
         } catch (err) {
             console.error("Token counting error:", err);
-            setError("Failed to analyze file. Please try again.");
+            setError(err instanceof Error ? err.message : "Failed to analyze file. Please try again.");
             setStats({
                 tokens: null,
                 gpt4oTokens: null,
