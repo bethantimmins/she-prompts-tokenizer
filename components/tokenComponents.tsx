@@ -385,7 +385,6 @@ export const TokenizerInput = () => {
                         className="font-mono bg-transparent border-0 focus-visible:ring-0 resize-none p-4"
                         value={text}
                         onChange={(e) => setText(e.target.value)}
-                        disabled={isProcessing}
                     />
                 </div>
             )}
