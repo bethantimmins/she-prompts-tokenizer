@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Playfair_Display, Inter, DM_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react"
 
@@ -37,16 +36,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <Script
-          async
-          src="https://plausible.io/js/pa-auN1ZdnQVpBz7zZBKuANv.js"
-        />
-        <Script id="plausible-init">
-          {`window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-  plausible.init()`}
-        </Script>
-      </head>
       <body
         className={`${playfairDisplay.variable} ${inter.variable} ${dmMono.variable} antialiased`}
       >
