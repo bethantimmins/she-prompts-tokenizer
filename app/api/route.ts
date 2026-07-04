@@ -44,6 +44,12 @@ function isRateLimited(ip: string): boolean {
     return entry.count > RATE_LIMIT_MAX_REQUESTS;
 }
 
+// Caps on request size, checked before any upstream API call — protects
+// against oversized payloads driving up cost/latency or hitting function
+// timeouts, independent of the per-IP rate limit above.
+const MAX_TEXT_LENGTH = 100_000; // characters
+const MAX_FILE_SIZE_BYTES = 15 * 1024 * 1024; // 15MB
+
 // Function to get GPT-4o token count
 function getGPT4oTokenCount(text: string) {
     try {
@@ -114,10 +120,17 @@ export async function POST(req: NextRequest) {
             }
             
             if (file) {
+                if (file.size > MAX_FILE_SIZE_BYTES) {
+                    return Response.json(
+                        { error: `File is too large. Max size is ${MAX_FILE_SIZE_BYTES / (1024 * 1024)}MB.` },
+                        { status: 400 }
+                    );
+                }
+
                 const arrayBuffer = await file.arrayBuffer();
                 const fileContent = new Uint8Array(arrayBuffer);
                 fileChars = fileContent.length;
-                
+
                 if (fileType === 'pdf') {
                     // Convert PDF to base64
                     const base64Content = Buffer.from(fileContent).toString('base64');
@@ -217,7 +230,14 @@ export async function POST(req: NextRequest) {
                 else {
                     // For text files, convert to UTF-8 string
                     text = new TextDecoder().decode(fileContent);
-                    
+
+                    if (text.length > MAX_TEXT_LENGTH) {
+                        return Response.json(
+                            { error: `Text is too long. Max length is ${MAX_TEXT_LENGTH.toLocaleString()} characters.` },
+                            { status: 400 }
+                        );
+                    }
+
                     // For text files, we can attempt to get token counts from other models
                     gpt4oTokens = await getGPT4oTokenCount(text);
                     geminiTokens = await getGeminiTokenCount(text);
@@ -229,6 +249,13 @@ export async function POST(req: NextRequest) {
             text = jsonData.text || '';
             model = jsonData.model || DEFAULT_MODEL;
             comparisonModel = jsonData.comparisonModel || null;
+
+            if (typeof text !== 'string' || text.length > MAX_TEXT_LENGTH) {
+                return Response.json(
+                    { error: `Text is too long. Max length is ${MAX_TEXT_LENGTH.toLocaleString()} characters.` },
+                    { status: 400 }
+                );
+            }
 
             // Get token counts from other models for text input
             gpt4oTokens = await getGPT4oTokenCount(text);
