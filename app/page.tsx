@@ -18,15 +18,15 @@ export default function TokenizerPage() {
           <p className="text-text-soft">
             We do not store any files or data. They are discarded immediately after processing.
           </p>
-          <p className="text-sm text-text-mid mt-2">
-            Explore the source code <a href="https://github.com/dhamaniasad/claude-tokenizer">here</a>.
-          </p>
         </div>
 
         <TokenizerInput />
 
         <footer className="mt-10 text-text-soft text-sm text-center space-y-2">
           <p>This website is not affiliated with or endorsed by Anthropic.</p>
+          <p>
+            Explore the source code <a href="https://github.com/dhamaniasad/claude-tokenizer">here</a>.
+          </p>
         </footer>
       </div>
     </div>
