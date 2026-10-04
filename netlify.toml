@@ -1,0 +1,13 @@
+# Rate-limit the token-counting API at Netlify's edge, before the Next.js
+# handler runs. Unlike the in-memory limiter in app/api/route.ts, this is
+# enforced across all instances. Build settings stay in the Netlify UI.
+[[redirects]]
+  from = "/api"
+  to = "/api"
+  status = 200
+  force = true
+
+  [redirects.rate_limit]
+    window_limit = 60
+    window_size = 60
+    aggregate_by = ["ip", "domain"]
