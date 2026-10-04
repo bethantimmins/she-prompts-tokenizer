@@ -27,9 +27,6 @@ export default function TokenizerPage() {
 
         <footer className="mt-10 text-text-soft text-sm text-center space-y-2">
           <p>This website is not affiliated with or endorsed by Anthropic.</p>
-          <p>
-            See my other projects: <a href="https://www.memoryplugin.com?ref=claude-tokenizer">MemoryPlugin</a> - long term memory for all your AI tools
-          </p>
         </footer>
       </div>
     </div>
