@@ -13,7 +13,7 @@ export default function TokenizerPage() {
           </p>
           <h1 className="font-serif text-3xl md:text-4xl font-normal mb-2">Claude Token Counter</h1>
           <p className="text-text-mid">
-            Count tokens for the latest Claude models including <span className="text-pink">Claude Sonnet 4.5, Opus 4.1, Haiku 4.5</span> and more. Upload <span className="text-pink">text files, PDFs or images, or paste text directly</span>.
+            Count tokens for the latest Claude models including <span className="text-pink">Claude Sonnet 5.5, Opus 5.5, Haiku 4.5</span> and more. Upload <span className="text-pink">text files, PDFs or images, or paste text directly</span>.
           </p>
           <p className="text-text-soft">
             We do not store any files or data. They are discarded immediately after processing.

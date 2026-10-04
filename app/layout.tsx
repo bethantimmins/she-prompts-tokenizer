@@ -23,7 +23,7 @@ const dmMono = DM_Mono({
 
 export const metadata: Metadata = {
   title: "Claude Token Counter · She Prompts",
-  description: "A free Claude token counter from She Prompts. Count tokens for Claude Sonnet 4.5, Opus 4.1, Haiku 4.5, and more — for text, PDFs, and images.",
+  description: "A free Claude token counter from She Prompts. Count tokens for Claude Sonnet 5.5, Opus 5.5, Haiku 4.5, and more — for text, PDFs, and images.",
   icons: {
     icon: "/icon.svg",
   },

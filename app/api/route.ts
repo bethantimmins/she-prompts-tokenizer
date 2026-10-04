@@ -13,7 +13,7 @@ if (!process.env.GEMINI_API_KEY) {
 }
 
 // Default model to use if none is provided
-const DEFAULT_MODEL = 'claude-opus-4-7';
+const DEFAULT_MODEL = 'claude-sonnet-5-5';
 
 // Per-IP rate limiting. In-memory, so it resets on cold start and isn't
 // shared across serverless instances — good enough to blunt bursts/bots
@@ -67,7 +67,7 @@ async function getGeminiTokenCount(text: string) {
         if (!process.env.GEMINI_API_KEY) return null;
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
         
         const result = await model.countTokens({
             contents: [{ role: 'user', parts: [{ text }] }]
@@ -152,14 +152,12 @@ export async function POST(req: NextRequest) {
                     // Count tokens using Anthropic API for PDF
                     const [count, comparison] = await Promise.all([
                         anthropic.beta.messages.countTokens({
-                            betas: ["token-counting-2024-11-01", "pdfs-2024-09-25"],
                             model: model,
                             messages: pdfMessages
                         }),
                         comparisonModel
                             ? anthropic.beta.messages.countTokens({
-                                betas: ["token-counting-2024-11-01", "pdfs-2024-09-25"],
-                                model: comparisonModel,
+                                    model: comparisonModel,
                                 messages: pdfMessages
                             })
                             : Promise.resolve(null)
@@ -204,13 +202,11 @@ export async function POST(req: NextRequest) {
                     // Count tokens for image using Anthropic API
                     const [count, comparison] = await Promise.all([
                         anthropic.beta.messages.countTokens({
-                            betas: ["token-counting-2024-11-01"],
                             model: model,
                             messages: imageMessages
                         }),
                         comparisonModel
                             ? anthropic.beta.messages.countTokens({
-                                betas: ["token-counting-2024-11-01"],
                                 model: comparisonModel,
                                 messages: imageMessages
                             })
@@ -270,13 +266,11 @@ export async function POST(req: NextRequest) {
         // Count tokens using Anthropic API for text, plus optional comparison model
         const [count, comparison] = await Promise.all([
             anthropic.beta.messages.countTokens({
-                betas: ["token-counting-2024-11-01"],
                 model: model,
                 messages: textMessages
             }),
             comparisonModel
                 ? anthropic.beta.messages.countTokens({
-                    betas: ["token-counting-2024-11-01"],
                     model: comparisonModel,
                     messages: textMessages
                 })
