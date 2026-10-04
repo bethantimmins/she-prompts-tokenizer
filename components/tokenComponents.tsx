@@ -12,17 +12,19 @@ const debounce = <T extends (...args: any[]) => void>(func: T, delay: number) =>
     };
 };
 
-// Available Claude models, with per-million-token input pricing (USD)
+// Available Claude models, with per-million-token input pricing (USD).
+// The first entry is the default selection.
 const CLAUDE_MODELS = [
-    { id: 'claude-opus-4-7', name: 'Claude Opus 4.7', inputPricePerMTok: 15 },
-    { id: 'claude-opus-4-6', name: 'Claude Opus 4.6', inputPricePerMTok: 15 },
+    { id: 'claude-sonnet-5-5', name: 'Claude Sonnet 5.5', inputPricePerMTok: 2 },
+    { id: 'claude-opus-5-5', name: 'Claude Opus 5.5', inputPricePerMTok: 4 },
+    { id: 'claude-opus-5', name: 'Claude Opus 5', inputPricePerMTok: 5 },
+    { id: 'claude-sonnet-5', name: 'Claude Sonnet 5', inputPricePerMTok: 2 },
+    { id: 'claude-opus-4-8', name: 'Claude Opus 4.8', inputPricePerMTok: 5 },
+    { id: 'claude-opus-4-7', name: 'Claude Opus 4.7', inputPricePerMTok: 5 },
+    { id: 'claude-opus-4-6', name: 'Claude Opus 4.6', inputPricePerMTok: 5 },
     { id: 'claude-sonnet-4-6', name: 'Claude Sonnet 4.6', inputPricePerMTok: 3 },
     { id: 'claude-sonnet-4-5-20250929', name: 'Claude Sonnet 4.5', inputPricePerMTok: 3 },
-    { id: 'claude-opus-4-1-20250805', name: 'Claude Opus 4.1', inputPricePerMTok: 15 },
     { id: 'claude-haiku-4-5-20251001', name: 'Claude Haiku 4.5', inputPricePerMTok: 1 },
-    { id: 'claude-sonnet-4-20250514', name: 'Claude Sonnet 4', inputPricePerMTok: 3 },
-    { id: 'claude-opus-4-20250514', name: 'Claude Opus 4', inputPricePerMTok: 15 },
-    { id: 'claude-3-7-sonnet-20250219', name: 'Claude 3.7 Sonnet', inputPricePerMTok: 3 },
 ];
 
 // Input pricing (USD per million tokens) for comparison models.
@@ -39,11 +41,17 @@ const formatCost = (tokens: number, pricePerMTok: number): string => {
     return `$${cost.toFixed(2)}`;
 };
 
-// Opus 4.7 introduced a new tokenizer — when it's selected we also run
-// Opus 4.6 for a side-by-side comparison.
-const OPUS_47_ID = 'claude-opus-4-7';
-const OPUS_46_ID = 'claude-opus-4-6';
-const OPUS_46_NAME = 'Claude Opus 4.6';
+// Models on the newer tokenizer (introduced with Opus 4.7 and Sonnet 5)
+// mapped to the last model of the same line on the older tokenizer — when
+// one is selected we also count against the older model side by side.
+const TOKENIZER_COMPARISONS: Record<string, { id: string; name: string; family: string }> = {
+    'claude-sonnet-5-5': { id: 'claude-sonnet-4-6', name: 'Claude Sonnet 4.6', family: 'Sonnet 5' },
+    'claude-sonnet-5': { id: 'claude-sonnet-4-6', name: 'Claude Sonnet 4.6', family: 'Sonnet 5' },
+    'claude-opus-5-5': { id: 'claude-opus-4-6', name: 'Claude Opus 4.6', family: 'Opus 4.7' },
+    'claude-opus-5': { id: 'claude-opus-4-6', name: 'Claude Opus 4.6', family: 'Opus 4.7' },
+    'claude-opus-4-8': { id: 'claude-opus-4-6', name: 'Claude Opus 4.6', family: 'Opus 4.7' },
+    'claude-opus-4-7': { id: 'claude-opus-4-6', name: 'Claude Opus 4.6', family: 'Opus 4.7' },
+};
 
 // List of supported file types
 const ACCEPTED_FILE_TYPES = {
@@ -118,7 +126,7 @@ export const TokenizerInput = () => {
         try {
             setIsProcessing(true);
 
-            const comparisonModel = selectedModel === OPUS_47_ID ? OPUS_46_ID : null;
+            const comparisonModel = TOKENIZER_COMPARISONS[selectedModel]?.id ?? null;
 
             // Get all token counts from the API
             const response = await fetch('/api', {
@@ -175,8 +183,9 @@ export const TokenizerInput = () => {
             formData.append('file', file);
             formData.append('model', selectedModel);
             formData.append('fileType', fileType);
-            if (selectedModel === OPUS_47_ID) {
-                formData.append('comparisonModel', OPUS_46_ID);
+            const comparison = TOKENIZER_COMPARISONS[selectedModel];
+            if (comparison) {
+                formData.append('comparisonModel', comparison.id);
             }
 
             const response = await fetch('/api', {
@@ -289,6 +298,7 @@ export const TokenizerInput = () => {
     const selectedModelInfo = CLAUDE_MODELS.find(m => m.id === selectedModel);
     const selectedModelName = selectedModelInfo?.name || selectedModel;
     const selectedModelPrice = selectedModelInfo?.inputPricePerMTok ?? null;
+    const selectedComparison = TOKENIZER_COMPARISONS[selectedModel] ?? null;
     const comparisonModelInfo = stats.comparisonModel
         ? CLAUDE_MODELS.find(m => m.id === stats.comparisonModel)
         : null;
@@ -391,13 +401,14 @@ export const TokenizerInput = () => {
 
             {error && <p className="text-destructive mb-2">{error}</p>}
 
-            {/* Opus 4.7 new-tokenizer notice */}
-            {selectedModel === OPUS_47_ID && (
+            {/* New-tokenizer notice */}
+            {selectedComparison && (
                 <div className="rounded-md border border-pink/25 bg-pink-light px-4 py-3 text-sm text-pink-dark">
-                    <span className="font-medium">Heads up:</span> Claude Opus 4.7 uses a
-                    new tokenizer that typically produces <em>more</em> tokens for the same
-                    input than Opus 4.6 and earlier models. For reference we also run the
-                    Opus 4.6 tokenizer and show both counts below.
+                    <span className="font-medium">Heads up:</span> {selectedModelName} uses
+                    the newer tokenizer (introduced with {selectedComparison.family}) that
+                    typically produces <em>more</em> tokens for the same input than earlier
+                    models. For reference we also run the {selectedComparison.name} tokenizer
+                    and show both counts below.
                 </div>
             )}
 
@@ -408,9 +419,7 @@ export const TokenizerInput = () => {
                 geminiTokens={stats.geminiTokens}
                 comparisonTokens={stats.comparisonTokens}
                 comparisonModelName={
-                    stats.comparisonModel === OPUS_46_ID
-                        ? OPUS_46_NAME
-                        : stats.comparisonModel
+                    comparisonModelInfo?.name ?? stats.comparisonModel
                 }
                 chars={stats.chars}
                 isProcessing={isProcessing}
