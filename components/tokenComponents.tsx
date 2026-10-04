@@ -29,7 +29,11 @@ const CLAUDE_MODELS = [
 
 // Input pricing (USD per million tokens) for comparison models.
 const GPT4O_INPUT_PRICE_PER_MTOK = 2.5;
-const GEMINI_INPUT_PRICE_PER_MTOK = 0.3;
+// Gemini 3.8 Flash and Gemini 3.1 Pro share a tokenizer, so one count serves
+// both. Flash's price rises on 1 Jan 2027; Pro is the <=200k-token prompt rate
+// (text input is capped well below that).
+const GEMINI_FLASH_INPUT_PRICE_PER_MTOK = Date.now() < Date.UTC(2027, 0, 1) ? 0.75 : 1.5;
+const GEMINI_PRO_INPUT_PRICE_PER_MTOK = 2;
 
 // Format a token-based cost estimate as a dollar amount. Uses more decimal
 // places for very small values so the figure doesn't just display as "$0.00".
@@ -560,7 +564,7 @@ export const TokenMetrics = ({ tokens, gpt4oTokens, geminiTokens, comparisonToke
             {/* Gemini Tokens - only show for text inputs */}
             {(fileType === 'text' || !fileName) && (
                 <div className="space-y-1">
-                    <h2 className="text-xs font-medium text-text-soft">Gemini Tokens</h2>
+                    <h2 className="text-xs font-medium text-text-soft">Gemini 3.8 Flash Tokens</h2>
                     <div className="flex items-baseline gap-2">
                         <p className="font-mono text-3xl font-light text-ink">
                             {isProcessing ? (
@@ -578,10 +582,16 @@ export const TokenMetrics = ({ tokens, gpt4oTokens, geminiTokens, comparisonToke
                         )}
                     </div>
                     {!isProcessing && geminiTokens !== null && geminiTokens > 0 && (
-                        <p className="text-xs text-text-soft">
-                            Est. input cost: {formatCost(geminiTokens, GEMINI_INPUT_PRICE_PER_MTOK)}
-                            <span className="text-text-soft/70"> @ ${GEMINI_INPUT_PRICE_PER_MTOK}/MTok</span>
-                        </p>
+                        <div className="text-xs text-text-soft">
+                            <p>
+                                Est. input cost (Flash): {formatCost(geminiTokens, GEMINI_FLASH_INPUT_PRICE_PER_MTOK)}
+                                <span className="text-text-soft/70"> @ ${GEMINI_FLASH_INPUT_PRICE_PER_MTOK}/MTok</span>
+                            </p>
+                            <p>
+                                Est. input cost (3.1 Pro): {formatCost(geminiTokens, GEMINI_PRO_INPUT_PRICE_PER_MTOK)}
+                                <span className="text-text-soft/70"> @ ${GEMINI_PRO_INPUT_PRICE_PER_MTOK}/MTok</span>
+                            </p>
+                        </div>
                     )}
                 </div>
             )}
